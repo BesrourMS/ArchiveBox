@@ -112,7 +112,7 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
         'LDAP_FIRSTNAME_ATTR':       {'type': str,   'default': None},
         'LDAP_LASTNAME_ATTR':        {'type': str,   'default': None},
         'LDAP_EMAIL_ATTR':           {'type': str,   'default': None},
-        'LDAP_CREATE_SUPERUSER':     {'type': bool,  'default': False},
+        'LDAP_CREATE_SUPERUSER':      {'type': bool,  'default': False},
     },
 
     'ARCHIVE_METHOD_TOGGLES': {
@@ -265,7 +265,7 @@ CONFIG_ALIASES = {
         for key, default in section.items()
             for alias in default.get('aliases', ())
 }
-USER_CONFIG = {key: section[key] for section in CONFIG_SCHEMA.values() for key in section.keys()}
+USER_CONFIG = {key for section in CONFIG_SCHEMA.values() for key in section.keys()}
 
 def get_real_name(key: str) -> str:
     """get the current canonical name for a given deprecated config key"""
@@ -442,8 +442,8 @@ def get_build_time(config) -> str:
         docker_build_end_time = Path('/VERSION.txt').read_text().rsplit('BUILD_END_TIME=')[-1].split('\n', 1)[0]
         return docker_build_end_time
 
-    src_last_modified_unix_timestamp = (config['PACKAGE_DIR'] / 'config.py').stat().st_mtime
-    return datetime.fromtimestamp(src_last_modified_unix_timestamp).strftime('%Y-%m-%d %H:%M:%S %s')
+    src_last_modified_unix_timestamp = (Path(config['PACKAGE_DIR']) / 'config.py').stat().st_mtime
+    return datetime.fromtimestamp(src_last_modified_unix_timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
 def get_versions_available_on_github(config):
     """
